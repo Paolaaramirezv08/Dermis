@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dermis Studio | Premium Dermatology Care</title>
+  <meta name="description" content="Experience luxury dermatology care at Dermis Studio. Medical-grade skincare delivered with precision and elegance.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Loading Animation -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="loader-content">
+      <div class="loader-dot loader-dot-1"></div>
+      <div class="loader-dot loader-dot-2"></div>
+      <div class="loader-dot loader-dot-3"></div>
+      <p class="loader-text">Dermis Studio</p>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-content login-modal">
+      <button class="modal-close" id="closeLoginModal" aria-label="Close login modal">×</button>
+      <div class="modal-header">
+        <h2>Welcome to Dermis Studio</h2>
+        <p>Professional dermatology care awaits</p>
+      </div>
+      <form id="loginForm" class="login-form" novalidate>
+        <div class="input-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" name="email" placeholder="your@email.com" required />
+        </div>
+        <div class="input-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" name="password" placeholder="Enter password" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign In</button>
+        <p id="loginError" class="error-message" aria-live="polite"></p>
+      </form>
+      <p class="login-demo">Demo: Use any email (admin: @colegiomanoamiga.edu.ar) and any password</p>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Modal -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-content admin-modal">
+      <button class="modal-close" id="closeAdminModal" aria-label="Close admin dashboard">×</button>
+      <div class="admin-header">
+        <h2>Admin Dashboard</h2>
+        <div class="admin-stats">
+          <div class="stat-card">
+            <p class="stat-value" id="totalAppointments">0</p>
+            <p class="stat-label">Total Appointments</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-value" id="todayAppointments">0</p>
+            <p class="stat-label">Today's Bookings</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-value" id="totalPatients">0</p>
+            <p class="stat-label">Total Patients</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-controls">
+        <input type="text" id="adminSearch" placeholder="Search by name, email, or phone..." class="admin-search" />
+        <select id="adminFilter" class="admin-filter">
+          <option value="">All Appointments</option>
+          <option value="today">Today</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="past">Past</option>
+        </select>
+      </div>
+
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Patient Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="appointmentsTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 2rem;">No appointments yet</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+  <!-- Navigation Header -->
+  <header class="navbar" id="navbar" aria-label="Main navigation">
+    <nav class="nav-container">
+      <a href="#home" class="brand">
+        <span class="brand-badge">✨</span>
+        <span class="brand-text">Dermis Studio</span>
+      </a>
+      
+      <div class="nav-links-wrapper">
+        <div class="nav-links">
+          <a href="#home" class="nav-link">Home</a>
+          <a href="#about" class="nav-link">About</a>
+          <a href="#services" class="nav-link">Services</a>
+          <a href="#testimonials" class="nav-link">Reviews</a>
+          <a href="#contact" class="nav-link">Contact</a>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">🌙</button>
+        <div class="user-menu" id="userMenu">
+          <button class="user-button" id="userButton">Sign In</button>
+          <div class="user-dropdown" id="userDropdown" style="display: none;">
+            <div class="user-info" id="userInfo" style="display: none;">
+              <p id="userName"></p>
+              <span id="userRole" class="role-badge"></span>
+            </div>
+            <button id="adminDashBtn" class="dropdown-item" style="display: none;">Admin Dashboard</button>
+            <button id="logoutBtn" class="dropdown-item" style="display: none;">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/5491234567890" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" title="Contact us on WhatsApp" aria-label="WhatsApp contact">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.869 1.23c-1.477.823-2.85 2.073-3.899 3.619-1.048 1.546-1.719 3.36-1.719 5.336 0 5.337 4.26 9.682 9.49 9.682 1.39 0 2.723-.188 4.001-.565l5.102 1.585c.58.18 1.213.057 1.642-.37.429-.427.603-1.07.423-1.655l-1.586-5.099c.335-1.259.524-2.592.524-3.978 0-5.337-4.26-9.682-9.49-9.682m0-2c6.065 0 11 4.935 11 11s-4.935 11-11 11S1 21.065 1 15 5.935 4 12 4z"/>
+    </svg>
+  </a>
+
+  <main id="mainContent">
+      <!-- HERO SECTION -->
+      <section class="hero" id="home" aria-label="Dermatology clinic hero section">
+        <div class="hero-background"></div>
+        <div class="hero-blur-1"></div>
+        <div class="hero-blur-2"></div>
+        
+        <div class="container hero-wrapper">
+          <!-- Hero Text Content (Left) -->
+          <div class="hero-content fade-slide">
+            <p class="hero-subtitle">Medical-grade skincare delivered with care.</p>
+            <h1 class="hero-title">Your Skin Deserves Professional Care</h1>
+            <p class="hero-description">
+              At Dermis Studio, we blend advanced dermatology and refined aesthetics to create personalized treatments for lasting skin confidence. Experience luxury medical care in a serene environment.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="bookHeroBtn">Book Appointment</button>
+              <a href="#services" class="btn btn-secondary">Explore Services</a>
+            </div>
+          </div>
+
+          <!-- Booking Form with Calendar (Right) -->
+          <div class="hero-booking fade-slide" id="quickBooking">
+            <div class="card booking-card glass-effect">
+              <h3>Quick Booking</h3>
+              
+              <!-- Calendar -->
+              <div class="calendar-section">
+                <div class="calendar-header">
+                  <button id="prev-month" class="calendar-nav" aria-label="Previous month">‹</button>
+                  <span id="calendar-month-year" class="calendar-title"></span>
+                  <button id="next-month" class="calendar-nav" aria-label="Next month">›</button>
+                </div>
+                <div class="calendar-weekdays">
+                  <div class="weekday">Sun</div>
+                  <div class="weekday">Mon</div>
+                  <div class="weekday">Tue</div>
+                  <div class="weekday">Wed</div>
+                  <div class="weekday">Thu</div>
+                  <div class="weekday">Fri</div>
+                  <div class="weekday">Sat</div>
+                </div>
+                <div id="calendar-days" class="calendar-days"></div>
+              </div>
+
+              <!-- Booking Form -->
+              <form id="booking-form" class="booking-form" novalidate>
+                <div class="form-row">
+                  <div class="input-group">
+                    <label for="book-name">Name *</label>
+                    <input type="text" id="book-name" name="name" placeholder="Your name" required />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="input-group">
+                    <label for="book-email">Email *</label>
+                    <input type="email" id="book-email" name="email" placeholder="your@email.com" required />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="input-group">
+                    <label for="book-phone">Phone *</label>
+                    <input type="tel" id="book-phone" name="phone" placeholder="(555) 123-4567" required />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="input-group">
+                    <label for="book-time">Time *</label>
+                    <select id="book-time" name="time" required>
+                      <option value="" disabled selected>Select time</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">Book Now</button>
+                <p id="booking-error" class="error-message" aria-live="polite"></p>
+                <p id="booking-success" class="success-message" aria-live="polite"></p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT SECTION -->
+      <section class="section container" id="about">
+        <div class="fade-slide">
+          <h2>About Our Clinic</h2>
+          <p class="lead">
+            A modern dermatology practice focused on clinical precision, comfort, and a tranquil patient experience. Every treatment is crafted around your skin goals.
+          </p>
+        </div>
+        <div class="about-grid">
+          <article class="card profile-card fade-slide glass-effect">
+            <div class="profile-avatar">
+              <img
+                src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=900&q=80"
+                alt="Dr. Amelia Hart - Professional dermatologist"
+              />
+            </div>
+            <div class="profile-info">
+              <h3>Dr. Amelia Hart</h3>
+              <p><span>Medical Dermatologist</span></p>
+              <p>Board-certified dermatologist with 12+ years of experience in medical and cosmetic dermatology.</p>
+              <p>MD, FAAD | Aesthetic Dermatology Fellow | Laser Safety Certified</p>
+            </div>
+          </article>
+          <div class="fade-slide">
+            <div class="card service-card glass-effect">
+              <h3>✓ Personalized Skin Assessments</h3>
+              <p>
+                We combine clinical diagnostics and skin health strategy to design treatments that respect your complexion and lifestyle.
+              </p>
+            </div>
+            <div class="card service-card glass-effect" style="margin-top: 1.5rem;">
+              <h3>✓ Luxury Patient Care</h3>
+              <p>
+                From consultation through recovery, every aspect of care is curated to feel calm, professional, and supportive.
+              </p>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-box fade-slide">
+                <h4>500+</h4>
+                <p>Happy Patients</p>
+              </div>
+              <div class="stat-box fade-slide">
+                <h4>10+</h4>
+                <p>Years Experience</p>
+              </div>
+              <div class="stat-box fade-slide">
+                <h4>98%</h4>
+                <p>Satisfaction Rate</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICES SECTION -->
+      <section class="section container" id="services">
+        <div class="fade-slide">
+          <h2>Our Premium Services</h2>
+          <p class="lead">
+            Comprehensive dermatology and aesthetic treatments, delivered with gentle precision and premium clinical expertise.
+          </p>
+        </div>
+        <div class="grid service-grid">
+          <article class="card service-card fade-slide glass-effect">
+            <div class="service-icon">💉</div>
+            <h3>Clinical Dermatology</h3>
+            <p>Diagnosis and treatment of eczema, psoriasis, rosacea, rashes, and other medical skin conditions.</p>
+            <span class="service-tag">Professional Grade</span>
+          </article>
+          <article class="card service-card fade-slide glass-effect">
+            <div class="service-icon">🎯</div>
+            <h3>Acne Treatment</h3>
+            <p>Customized plans for acne-prone skin, including medical skincare, peels, and targeted therapies.</p>
+            <span class="service-tag">Specialized</span>
+          </article>
+          <article class="card service-card fade-slide glass-effect">
+            <div class="service-icon">✨</div>
+            <h3>Laser Treatments</h3>
+            <p>Procedures for pigmentation, hair reduction, resurfacing, and vascular rejuvenation.</p>
+            <span class="service-tag">Advanced Tech</span>
+          </article>
+          <article class="card service-card fade-slide glass-effect">
+            <div class="service-icon">🌸</div>
+            <h3>Facial Cleansing</h3>
+            <p>Refined deep cleansing treatments that detoxify and rejuvenate your skin naturally.</p>
+            <span class="service-tag">Luxury</span>
+          </article>
+          <article class="card service-card fade-slide glass-effect">
+            <div class="service-icon">🔍</div>
+            <h3>Mole Checkups</h3>
+            <p>Professional skin surveillance and mole monitoring using advanced diagnostic tools.</p>
+            <span class="service-tag">Clinical</span>
+          </article>
+          <article class="card service-card fade-slide glass-effect">
+            <div class="service-icon">💎</div>
+            <h3>Skin Rejuvenation</h3>
+            <p>Anti-aging and radiance treatments for glowing, hydrated skin and improved tone.</p>
+            <span class="service-tag">Premium</span>
+          </article>
+        </div>
+      </section>
+
+      <!-- TESTIMONIALS SECTION -->
+      <section class="section container" id="testimonials">
+        <div class="fade-slide">
+          <h2>What Our Patients Say</h2>
+          <p class="lead">
+            Thoughtful dermatology care that supports lasting skin improvements and confidence.
+          </p>
+        </div>
+        <div class="testimonial-wrapper fade-slide">
+          <article class="testimonial-card glass-effect">
+            <div class="testimonial-stars" id="testimonialStars">
+              ⭐⭐⭐⭐⭐
+            </div>
+            <p id="testimonial-quote" class="testimonial-quote"></p>
+            <div class="testimonial-author">
+              <div class="author-avatar" id="testimonial-avatar"></div>
+              <div class="author-info">
+                <h4 id="testimonial-name"></h4>
+                <p id="testimonial-role"></p>
+              </div>
+            </div>
+          </article>
+          <div class="testimonial-nav">
+            <button id="testimonial-prev" aria-label="Previous testimonial">❮</button>
+            <div class="testimonial-dots">
+              <span class="dot" id="dot-0"></span>
+              <span class="dot" id="dot-1"></span>
+              <span class="dot" id="dot-2"></span>
+            </div>
+            <button id="testimonial-next" aria-label="Next testimonial">❯</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- GALLERY SECTION -->
+      <section class="section container" id="gallery">
+        <div class="fade-slide">
+          <h2>Before & After Gallery</h2>
+          <p class="lead">
+            Subtle enhancements and advanced skin treatments showcased through elegant results.
+          </p>
+        </div>
+        <div class="grid gallery-grid fade-slide">
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=900&q=80" alt="Clinical dermatology consultation" />
+            <div class="gallery-overlay">
+              <strong>Before</strong>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1631217307228-07e84e1a4c60?auto=format&fit=crop&w=900&q=80" alt="Dermatology treatment result" />
+            <div class="gallery-overlay">
+              <strong>After</strong>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=900&q=80" alt="Clear skin after dermatology treatment" />
+            <div class="gallery-overlay">
+              <strong>Glow</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT SECTION -->
+      <section class="section container" id="contact">
+        <div class="fade-slide">
+          <h2>Contact & Location</h2>
+          <p class="lead">
+            Reach out to our clinic for inquiries, appointments, or skincare guidance.
+          </p>
+        </div>
+        <div class="contact-grid">
+          <aside class="contact-card fade-slide glass-effect">
+            <h3>Get in Touch</h3>
+            <ul class="contact-list">
+              <li><strong>📍 Address:</strong> 46 Willow Lane, Suite 201, San Francisco, CA</li>
+              <li><strong>📞 Phone:</strong> <a href="tel:+15553248192">(555) 324-8192</a></li>
+              <li><strong>✉️ Email:</strong> <a href="mailto:care@dermisstudio.com">care@dermisstudio.com</a></li>
+              <li><strong>🕐 Hours:</strong> Mon-Fri 9:00 AM - 6:00 PM</li>
+            </ul>
+            <div class="social-links">
+              <a href="#" aria-label="Instagram" title="Follow us on Instagram">📸</a>
+              <a href="#" aria-label="Facebook" title="Like us on Facebook">👍</a>
+              <a href="#" aria-label="LinkedIn" title="Connect on LinkedIn">💼</a>
+            </div>
+          </aside>
+          <iframe
+            class="map-frame fade-slide"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.120085269271!2d-122.41941508468194!3d37.77492927975842!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085808a96d2d621%3A0x7f2e5a3d6c42f484!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1700000000000"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Dermis Studio location map"
+            style="border-radius: 2rem; box-shadow: 0 28px 70px rgba(19, 43, 68, 0.09);"
+          ></iframe>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <nav class="footer-nav">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a>
+          </nav>
+          <small>© 2026 Dermis Studio. Premium dermatology care designed for lasting confidence. All rights reserved.</small>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Floating Action Buttons -->
+    <button class="sticky-book" id="sticky-book" aria-label="Book appointment" title="Book Now">📅 Book Now</button>
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top" title="Back to top">↑</button>
+
+    <script src="script.js"></script>
+  </body>
+</html>
