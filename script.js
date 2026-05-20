@@ -1,13 +1,13 @@
-// ============================================================
+/* ============================================================
 // DERMIS STUDIO - PREMIUM DERMATOLOGY CLINIC
 // Complete JavaScript | Login | Admin Dashboard | Booking | Theme
-// ============================================================
+// ============================================================*/
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
-  import firebaseConfig from "./firebase-config";
+import firebaseConfig from "./firebase-config.js";
 // ============================================================
 // CONFIGURATION & STATE
-// ============================================================
+// ============================================================*/
 
 const CONFIG = {
   workHours: { start: 9, end: 18 },
